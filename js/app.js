@@ -68,12 +68,12 @@ const RENDER = {
       <div>
         <p class="ey">${esc(P().kitLabel)}</p>
         <h1><span class="ln1">${esc(H.headline[0])}</span><br><span class="ln1" style="--d:.2s"><span class="gt">${esc(H.headline[1])}</span></span></h1>
-        <p class="lead">${esc(H.lead)}</p>
+        <p class="lead">${esc(H.lead).replace(esc(P().name), `<strong class="nm">${esc(P().name)}</strong>`)}</p>
         <div class="tags">${H.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>
         <div class="cta">
           <a class="btn w" href="#contact" data-action="collab">${icon("heart")}${esc(H.cta)}</a>
-          <a class="btn g" ${IG_LINK()}>${icon("ig")}${esc(P().instagramHandle)}</a>
-          <button class="btn g" type="button" data-action="share">${icon("share")}Share</button>
+          <a class="btn g" ${IG_LINK()} aria-label="Instagram ${esc(P().instagramHandle)}">${icon("ig")}<span class="bt">${esc(P().instagramHandle)}</span></a>
+          <button class="btn g" type="button" data-action="share" aria-label="Share or save as PDF">${icon("share")}<span class="bt">Share</span></button>
         </div>
       </div>
       ${photos.length ? `<div class="cl">
@@ -216,7 +216,7 @@ function initNav() {
   lk.addEventListener("mouseleave", () => hl.classList.remove("show"));
   if (!("IntersectionObserver" in window)) return;
   const spy = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
+    if (e.isIntersecting) { links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); const on = $("a.on", lk); if (on && lk.scrollWidth > lk.clientWidth) lk.scrollTo({ left: on.offsetLeft - (lk.clientWidth - on.offsetWidth) / 2, behavior: "smooth" }); }
   }), { rootMargin: "-45% 0px -50% 0px" });
   $$("#app > section, #app > .cn").forEach(s => spy.observe(s));
 }
