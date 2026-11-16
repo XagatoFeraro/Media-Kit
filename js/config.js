@@ -93,7 +93,12 @@ const CONFIG = {
   audience: {
     note: "Top cities ranked by audience share.",
     // Ordered by rank. Add `percent: 38` to any city to show a real figure.
-    cities: [{ name: "Mumbai" }, { name: "Pune" }, { name: "Delhi" }, { name: "Bangalore" }],
+    cities: [
+      { name: "Mumbai", map: "assets/images/cities/mumbai.svg", vibe: "The city that never slows down" },
+      { name: "Pune", map: "assets/images/cities/pune.svg", vibe: "A little culture, a lot of character" },
+      { name: "Delhi", map: "assets/images/cities/delhi.svg", vibe: "Capital energy" },
+      { name: "Bangalore", map: "assets/images/cities/bangalore.svg", vibe: "Garden city, creative pulse" },
+    ],
   },
 
   /* ── 9. WHY BRANDS WORK WITH ME ─────────────────────────────── */
