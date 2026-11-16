@@ -997,7 +997,18 @@ nav > div { position:relative;justify-content:space-between; }
   .rc { min-height:0!important;padding:4mm;border-radius:4mm; }
   .rc h3 { margin:2mm 0 8mm;font-size:11pt; }
   .pr { font-size:20pt; }
-  #rates > .btn { display:none!important; }
+  #rates > .btn {
+    display:inline-flex!important;
+    min-height:0;
+    margin-top:2mm;
+    padding:2mm 4mm;
+    border:.5pt solid var(--line);
+    background:transparent!important;
+    color:var(--ink)!important;
+    box-shadow:none!important;
+  }
+  #rates > .btn::after { display:none!important; }
+  .cn > .btn { display:none!important; }
 
   .cn {
     width:auto!important;
