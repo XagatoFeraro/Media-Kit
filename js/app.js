@@ -454,13 +454,16 @@ async function printPage() {
 
     await Promise.all([
       document.fonts?.ready,
-      ...images.map(image => image.decode?.().catch(() => undefined) ?? Promise.resolve()),
+      ...images.map(image => typeof image.decode === "function" ? image.decode().catch(() => undefined) : Promise.resolve()),
     ]);
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     window.print();
   } catch (err) {
     console.warn("[media-kit] print preparation failed:", err);
     toast("Couldn’t prepare the PDF. Try Ctrl/Cmd + P and choose “Save as PDF”.");
+    removeEventListener("beforeprint", mark);
+    removeEventListener("blur", onBlur);
+    return;
   }
 
   setTimeout(() => {
