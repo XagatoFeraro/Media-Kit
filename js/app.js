@@ -116,13 +116,19 @@ const RENDER = {
 
   audience() {
     const A = CONFIG.audience;
-    const bars = A.cities.map((c, i) => {
-      if (c.percent == null) return `<div class="rk2"><span>${i + 1}</span>${esc(c.name)}</div>`;
-      const w = Math.max(0, Math.min(100, +c.percent || 0));
-      return `<div class="row">${esc(c.name)} · ${esc(c.percent)}%</div><div class="bar"><i data-w="${w}" style="--w:${w}%"></i></div>`;
-    }).join("");
-    return section("audience", head(CONFIG.sections.audience) + `<div class="card">${bars}<p class="lbl note-sm">${esc(A.note)}</p></div>`);
-  },
+    const cities = A.cities.map((city, index) => `
+      <article class="city-card" style="--city-delay:${index * 90}ms">
+        <div class="city-map">
+          ${img(city.map, `Illustrated street map of ${city.name}`, 'loading="lazy"')}
+          <span class="city-rank">${String(index + 1).padStart(2, "0")}</span>
+          <span class="city-pin" aria-hidden="true"></span>
+        </div>
+        <div class="city-meta"><h3>${esc(city.name)}</h3><p>${esc(city.vibe || "A top audience city")}</p></div>
+      </article>`).join("");
+    return section("audience", head(CONFIG.sections.audience) + `
+      <div class="city-grid" aria-label="Top audience cities">${cities}</div>
+      <p class="city-note">${esc(A.note)}</p>`);
+  }
 
   expect() {
     return section("expect", head(CONFIG.sections.expect) + `<div class="ex">${CONFIG.expect.map(e => `<div class="card"><h3>${esc(e.title)}</h3><p>${esc(e.text)}</p></div>`).join("")}</div>`);
@@ -215,10 +221,14 @@ function initSectionNavigation() {
   const sections = $$("#app > section[id], #app > .cn[id]");
   if (!controls.length || !sections.length) return;
 
+  let navigationTarget = "";
+  let settleTimer = 0;
+  let frame = 0;
+
   const highlightPill = link => {
-    if (!nav) return;
+    if (!nav || !link) return;
     const pill = $(".hl", nav);
-    if (!pill || !link) return;
+    if (!pill) return;
     pill.style.width = link.offsetWidth + "px";
     pill.style.transform = `translateX(${link.offsetLeft}px)`;
     pill.classList.add("show");
@@ -235,42 +245,47 @@ function initSectionNavigation() {
     highlightPill(navLinks.find(link => link.getAttribute("href") === "#" + id));
   };
 
+  const finishNavigation = () => {
+    if (!navigationTarget) return;
+    navigationTarget = "";
+    clearTimeout(settleTimer);
+    updateFromScroll();
+  };
+
   controls.forEach(link => link.addEventListener("click", event => {
     const id = link.getAttribute("href").slice(1);
     const target = document.getElementById(id);
     if (!target) return;
     event.preventDefault();
+    navigationTarget = id;
+    clearTimeout(settleTimer);
     setActive(id);
     history.replaceState(null, "", "#" + id);
     const headerHeight = $("nav")?.getBoundingClientRect().height || 0;
-    const top = target.getBoundingClientRect().top + scrollY - headerHeight - 14;
+    const top = target.getBoundingClientRect().top + scrollY - headerHeight - 18;
     window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
+    settleTimer = setTimeout(finishNavigation, reduceMotion ? 0 : 1800);
   }));
 
   if (nav) {
-    navLinks.forEach(link => link.addEventListener("mouseenter", () => {
-      const pill = $(".hl", nav);
-      if (!pill) return;
-      pill.style.width = link.offsetWidth + "px";
-      pill.style.transform = "translateX(" + link.offsetLeft + "px)";
-      pill.classList.add("show");
-    }));
-    nav.addEventListener("mouseleave", () => {
-      const active = navLinks.find(link => link.classList.contains("on"));
-      if (active) highlightPill(active);
-    });
+    navLinks.forEach(link => link.addEventListener("mouseenter", () => highlightPill(link)));
+    nav.addEventListener("mouseleave", () => highlightPill(navLinks.find(link => link.classList.contains("on"))));
   }
 
-  let frame = 0;
   const updateFromScroll = () => {
+    if (navigationTarget) {
+      setActive(navigationTarget);
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(finishNavigation, 180);
+      return;
+    }
     if (frame) return;
     frame = requestAnimationFrame(() => {
       frame = 0;
       const line = Math.min(innerHeight * 0.32, 240);
       let current = sections[0];
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= line) current = section;
+      for (const item of sections) {
+        if (item.getBoundingClientRect().top <= line) current = item;
         else break;
       }
       if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
@@ -281,6 +296,7 @@ function initSectionNavigation() {
   };
 
   addEventListener("scroll", updateFromScroll, { passive: true });
+  addEventListener("scrollend", finishNavigation, { passive: true });
   addEventListener("resize", updateFromScroll, { passive: true });
   updateFromScroll();
 }
