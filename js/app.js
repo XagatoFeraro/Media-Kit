@@ -206,29 +206,76 @@ function renderChrome() {
 /* ───────── 4.4 Behaviours (each is independent + guarded) ───────── */
 
 /** Fade-in on scroll, count-up numbers, animated bars, staggered cards. */
-function initQuickDock() {
+function initSectionNavigation() {
+  const nav = $("#lk");
+  const navLinks = nav ? $$("a[href^='#']", nav) : [];
   const dock = $(".quick-dock");
-  if (!dock) return;
-  const items = $("[data-dock-item]", dock);
-  const targets = items.filter(item => item.tagName === "A").map(item => $(item.getAttribute("href"))).filter(Boolean);
-  const setActive = key => items.forEach(item => {
-    const active = item.dataset.dockItem === key;
-    item.classList.toggle("active", active);
-    if (active) item.setAttribute("aria-current", "location");
-    else item.removeAttribute("aria-current");
-  });
-  items.filter(item => item.tagName === "A").forEach(item => item.addEventListener("click", () => setActive(item.dataset.dockItem)));
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(entries => {
-      const current = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (current) setActive(current.target.id === "home" ? "home" : current.target.id === "numbers" ? "numbers" : "work");
-    }, { rootMargin: "-35% 0px -50% 0px", threshold: [0, .1, .25, .5] });
-    targets.forEach(target => observer.observe(target));
-  } else {
-    const update = () => { const current = targets.find(target => { const r = target.getBoundingClientRect(); return r.top < innerHeight * .6 && r.bottom > innerHeight * .3; }); setActive(current?.id || ""); };
-    addEventListener("scroll", update, { passive: true }); update();
+  const dockLinks = dock ? $$("a[data-dock-item]", dock) : [];
+  const controls = [...navLinks, ...dockLinks];
+  const sections = $$("#app > section[id], #app > .cn[id]");
+  if (!controls.length || !sections.length) return;
+
+  const highlightPill = link => {
+    if (!nav) return;
+    const pill = $(".hl", nav);
+    if (!pill || !link) return;
+    pill.style.width = link.offsetWidth + "px";
+    pill.style.transform = `translateX(${link.offsetLeft}px)`;
+    pill.classList.add("show");
+  };
+
+  const setActive = id => {
+    controls.forEach(link => {
+      const active = link.getAttribute("href") === "#" + id;
+      link.classList.toggle("on", active);
+      link.classList.toggle("active", active);
+      if (active) link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+    highlightPill(navLinks.find(link => link.getAttribute("href") === "#" + id));
+  };
+
+  controls.forEach(link => link.addEventListener("click", () => {
+    const id = link.getAttribute("href").slice(1);
+    setActive(id);
+  }));
+
+  if (nav) {
+    navLinks.forEach(link => link.addEventListener("mouseenter", () => highlightPill(link)));
+    nav.addEventListener("mouseleave", () => {
+      const active = navLinks.find(link => link.classList.contains("on"));
+      if (active) highlightPill(active);
+      else $(".hl", nav)?.classList.remove("show");
+    });
   }
+
+  let frame = 0;
+  const updateFromScroll = () => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      const line = Math.min(innerHeight * 0.38, 300);
+      let current = sections[0];
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= line) current = section;
+        if (rect.top <= line && rect.bottom > line) {
+          current = section;
+          break;
+        }
+      }
+      if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
+        current = sections[sections.length - 1];
+      }
+      setActive(current?.id || "");
+    });
+  };
+
+  addEventListener("scroll", updateFromScroll, { passive: true });
+  addEventListener("resize", updateFromScroll, { passive: true });
+  updateFromScroll();
 }
+
 function initReveal() {
   const reveal = el => {
     el.classList.add("on");
@@ -465,7 +512,7 @@ function boot() {
     document.title = `${P().name} — ${CONFIG.share.title.split("—").pop().trim()}`;
     $("#app").innerHTML = CONFIG.layout.map(id => RENDER[id] ? safe("render:" + id, RENDER[id], "") : "").join("");
     safe("render:chrome", renderChrome);
-    [["reveal", initReveal], ["nav", initNav], ["quick-dock", initQuickDock], ["carousel", initCarousel], ["gallery", initGallery], ["scroll", initScroll], ["actions", initActions]]
+    [["reveal", initReveal], ["section-navigation", initSectionNavigation], ["carousel", initCarousel], ["gallery", initGallery], ["scroll", initScroll], ["actions", initActions]]
       .forEach(([name, fn]) => safe("init:" + name, fn));
   } catch (err) {
     console.error("[media-kit] fatal:", err);

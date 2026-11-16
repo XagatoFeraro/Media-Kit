@@ -722,3 +722,19 @@ nav > div { position:relative;justify-content:space-between; }
   nav .brand-lockup .nh { font-size:13px; }
   nav .brand-lockup > .ic { width:18px;height:18px; }
 }
+
+/* Keep the selected desktop destination visibly active. */
+.lk a.on {
+  background:var(--bg2);
+  -webkit-background-clip:border-box;
+  background-clip:border-box;
+  color:var(--ink);
+  font-weight:700;
+}
+.lk .hl.show { opacity:1; }
+.quick-dock > a.active {
+  background:#59663d!important;
+  color:#fff!important;
+  box-shadow:0 3px 10px rgba(53,65,39,.16);
+}
+.quick-dock > a.active .ic { color:inherit; }
