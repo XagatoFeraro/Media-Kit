@@ -455,7 +455,7 @@ nav > div { justify-content:space-between; }
 .collab-modal[hidden] { display:none!important; }
 .collab-modal { position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(25,31,22,.48);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:modal-fade .22s ease both; }
 .collab-panel { position:relative;width:min(100%,440px);padding:clamp(28px,7vw,42px);border:1px solid rgba(53,65,39,.1);border-radius:32px;background:#fffdf5;color:#283326;box-shadow:0 28px 90px rgba(23,31,17,.25);animation:modal-rise .42s cubic-bezier(.2,.8,.2,1) both;text-align:center; }
-.modal-close { position:absolute;top:16px;right:16px;width:40px;height:40px;border:0;border-radius:50%;background:#f0ecd9;color:#39452f;font:28px/1 inherit;cursor:pointer; }
+.modal-close { position:absolute;top:16px;right:16px;width:40px;height:40px;border:0;border-radius:50%;background:#f0ecd9;color:#39452f;font-size:28px;line-height:1;cursor:pointer; }
 .modal-mark { display:grid;place-items:center;width:54px;height:54px;margin:0 auto 18px;border-radius:18px;background:#e9e3c7;color:#59663d; }
 .modal-mark .ic { width:25px;height:25px; }
 .collab-panel .ey { margin-bottom:10px;color:#78834e; }

@@ -189,7 +189,7 @@ function renderChrome() {
         <p id="collabDescription">Choose how you’d like to get in touch with Tanisha.</p>
         <a class="contact-choice email-choice" href="${mailto(CONFIG.contact.emailSubject, CONFIG.contact.emailBody)}" data-action="collab-email">${icon("mail")}<span><strong>Email</strong><small>${esc(P().email)}</small></span>${icon("arrow")}</a>
         <a class="contact-choice" href="https://ig.me/m/${encodeURIComponent(P().instagramHandle.replace(/^@/, ""))}" target="_blank" rel="noopener noreferrer" data-action="collab-dm">${icon("ig")}<span><strong>Instagram DM</strong><small>Message on Instagram</small></span>${icon("arrow")}</a>
-        <p class="modal-note">Usually replies within 1–2 business days.</p>
+        <p class="modal-note">For brand partnerships, campaign enquiries and UGC.</p>
       </section>
     </div>`;
   $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + collabDialog);
