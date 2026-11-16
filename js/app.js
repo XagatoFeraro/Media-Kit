@@ -161,12 +161,13 @@ const RENDER = {
 function renderChrome() {
   const navItems = CONFIG.layout.filter(id => CONFIG.sections[id]?.nav && document.getElementById(id));
   const nav = `<nav><div>
-      <b class="nh">${esc(P().name)}</b>
+      <a class="brand-lockup" ${IG_LINK()} aria-label="Visit Tanisha Tripathi on Instagram">
+        ${icon("ig")}<b class="nh">${esc(P().name)}</b>
+      </a>
       <span class="lk" id="lk"><i class="hl"></i>${navItems.map(id => `<a href="#${id}">${esc(CONFIG.sections[id].label)}</a>`).join("")}</span>
       <span class="ac">
-        <a class="ib" ${IG_LINK()} aria-label="Instagram">${icon("ig")}</a>
         <button class="ib" type="button" data-action="share" aria-label="Share or save as PDF">${icon("share")}</button>
-        <a class="btn w s" href="#contact" data-action="collab">${icon("heart")}${esc(CONFIG.contact.cta)}</a>
+        <button class="btn w s" type="button" data-action="collab">${icon("heart")}${esc(CONFIG.contact.cta)}</button>
       </span></div></nav>`;
   const footer = `<footer>© ${P().year} ${esc(P().name)} · ${esc(P().city)} · Figures from ${esc(P().statsSource)}
       <div class="fl noprint"><a ${IG_LINK()}>${icon("ig")}${esc(P().instagramHandle)}</a><a href="mailto:${esc(P().email)}">${icon("mail")}${esc(P().email)}</a></div></footer>`;
@@ -179,12 +180,19 @@ function renderChrome() {
       </div><button class="x" type="button" data-action="share-close">Close</button></div></div>`;
   const top = `<button class="totop noprint" id="toTop" type="button" data-action="top" aria-label="Back to top">${icon("up")}</button>`;
   $("#app").insertAdjacentHTML("afterbegin", nav);
-  const quick = `<div class="quick-dock noprint" aria-label="Quick actions">
-      <button type="button" data-action="share">${icon("share")}<span>Share</span></button>
-      <a href="#numbers">${icon("eye")}<span>Audience</span></a>
-      <a href="#contact" data-action="collab">${icon("heart")}<span>Collaborate</span></a>
+  const collabDialog = `<div class="collab-modal noprint" id="collabDialog" hidden>
+      <section class="collab-panel" role="dialog" aria-modal="true" aria-labelledby="collabTitle" aria-describedby="collabDescription">
+        <button class="modal-close" type="button" data-action="collab-close" aria-label="Close dialog">×</button>
+        <span class="modal-mark">${icon("heart")}</span>
+        <p class="ey">Brand collaborations</p>
+        <h2 id="collabTitle">Let’s create together.</h2>
+        <p id="collabDescription">Choose how you’d like to get in touch with Tanisha.</p>
+        <a class="contact-choice email-choice" href="${mailto(CONFIG.contact.emailSubject, CONFIG.contact.emailBody)}" data-action="collab-email">${icon("mail")}<span><strong>Email</strong><small>${esc(P().email)}</small></span>${icon("arrow")}</a>
+        <a class="contact-choice" href="https://ig.me/m/${encodeURIComponent(P().instagramHandle.replace(/^@/, ""))}" target="_blank" rel="noopener noreferrer" data-action="collab-dm">${icon("ig")}<span><strong>Instagram DM</strong><small>Message on Instagram</small></span>${icon("arrow")}</a>
+        <p class="modal-note">Usually replies within 1–2 business days.</p>
+      </section>
     </div>`;
-  $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + quick);
+  $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + collabDialog);
 }
 
 /* ───────── 4.4 Behaviours (each is independent + guarded) ───────── */
@@ -361,13 +369,16 @@ function printPage() {
 
 /* ───────── 4.6 Actions: everything a button with data-action="…" does ───────── */
 const sheet = { open() { const s = $("#sh"); if (s) { s.hidden = false; $("button", s)?.focus(); } }, close() { const s = $("#sh"); if (s) s.hidden = true; } };
+let previousFocus = null;
+const collab = {
+  open() { const dialog = $("#collabDialog"); if (!dialog) return; previousFocus = document.activeElement; dialog.hidden = false; document.body.classList.add("modal-open"); $(".contact-choice", dialog)?.focus(); },
+  close() { const dialog = $("#collabDialog"); if (!dialog || dialog.hidden) return; dialog.hidden = true; document.body.classList.remove("modal-open"); previousFocus?.focus?.(); }
+};
 const ACTIONS = {
-  /* "Let’s collab" (nav + hero): confetti → glide to the contact card → pulse the email row. */
-  collab(e, el) {
-    e.preventDefault(); confetti(...clickPoint(e, el));
-    if (scrollToId("contact")) setTimeout(() => { const r = $("#emailRow"); r?.classList.add("pulse"); setTimeout(() => r?.classList.remove("pulse"), 2400); }, 600);
-    else openMail(mailto(CONFIG.contact.emailSubject, CONFIG.contact.emailBody));   // fallback if the contact section is hidden
-  },
+  collab(e, el) { e.preventDefault(); collab.open(); },
+  "collab-close": () => collab.close(),
+  "collab-email": () => collab.close(),
+  "collab-dm": () => collab.close(),
   /* "Let’s collab" (contact card): confetti, then the normal mailto link opens the email app. */
   email(e, el) { confetti(...clickPoint(e, el)); },
   "copy-email": (e, el) => copyText(P().email, "Email copied ✓").then(ok => { if (!ok) return; el._h ??= el.innerHTML; el.innerHTML = icon("check"); clearTimeout(el._t); el._t = setTimeout(() => el.innerHTML = el._h, 1700); }),
@@ -388,13 +399,14 @@ const ACTIONS = {
 };
 function initActions() {
   document.addEventListener("click", e => {
-    if (e.target === $("#sh")) return sheet.close();                       // click on dim backdrop
+    if (e.target === $("#sh")) return sheet.close();
+    if (e.target === $("#collabDialog")) return collab.close();
     const el = e.target.closest("[data-action]");
     if (el) { const fn = ACTIONS[el.dataset.action]; if (fn) safe("action:" + el.dataset.action, () => fn(e, el)); else console.warn("Unknown action", el.dataset.action); }
     const m = e.target.closest('a[href^="mailto:"]');                       // every email link goes through openMail (with fallback)
     if (m) { e.preventDefault(); openMail(m.href); }
   });
-  addEventListener("keydown", e => { if (e.key === "Escape") { sheet.close(); closeViewer(); } });
+  addEventListener("keydown", e => { if (e.key === "Escape") { sheet.close(); collab.close(); closeViewer(); } });
   addEventListener("error", e => console.error("[media-kit] runtime error:", e.message));
   document.addEventListener("error", e => { if (e.target.tagName === "IMG") e.target.remove(); }, true);   // broken image → remove quietly
 }
