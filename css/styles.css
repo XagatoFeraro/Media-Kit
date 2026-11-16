@@ -439,7 +439,7 @@ button,a { touch-action:manipulation; }
 @media (min-width:821px) { .hero { gap:42px; }.quick-dock { display:none; } }
 @media (hover:none) { .card:hover,.btn:hover,.ib:hover,.li:hover,.rw img:hover { transform:none; } }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }.quick-dock,.card,.btn { transition:none!important; } }
-@media print { .quick-dock { display:none!important; }footer { padding-bottom:36px; } }
+@media print { .quick-dock { display:none; }footer { padding-bottom:36px; } }
 
 /* Final polish: centered responsive composition + accessible collaboration modal */
 :root { --bg:#fbf8ed;--bg2:#f0ecd9;--card:#fffdf5;--ink:#283326;--mut:#69705f;--acc:#657044;--g:linear-gradient(115deg,#59663d 0%,#78834e 58%,#a1a36b 100%);--on:#fffdf5;--line:rgba(53,65,39,.13);--glass:rgba(251,248,237,.9);color-scheme:light; }
@@ -451,7 +451,7 @@ nav > div { justify-content:space-between; }
 .brand-lockup:hover > .ic { transform:scale(1.12) rotate(-8deg); }
 .brand-lockup .nh { font-weight:700;letter-spacing:-.025em; }
 .ac { flex:none; }
-.quick-dock { display:none!important; }
+.quick-dock { display:none; }
 .collab-modal[hidden] { display:none!important; }
 .collab-modal { position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(25,31,22,.48);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:modal-fade .22s ease both; }
 .collab-panel { position:relative;width:min(100%,440px);padding:clamp(28px,7vw,42px);border:1px solid rgba(53,65,39,.1);border-radius:32px;background:#fffdf5;color:#283326;box-shadow:0 28px 90px rgba(23,31,17,.25);animation:modal-rise .42s cubic-bezier(.2,.8,.2,1) both;text-align:center; }
