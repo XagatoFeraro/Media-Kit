@@ -192,11 +192,11 @@ function renderChrome() {
         <p class="modal-note">For brand partnerships, campaign enquiries and UGC.</p>
       </section>
     </div>`;
-  const quickDock = `<nav class="quick-dock noprint" aria-label="Quick navigation">
+  const quickDock = `<div class="quick-dock noprint" role="navigation" aria-label="Quick navigation">
       <button type="button" data-action="share" aria-label="Share media kit">${icon("share")}<span>Share</span></button>
       <a href="#numbers" aria-label="View audience numbers">${icon("eye")}<span>Numbers</span></a>
       <a href="#work" aria-label="View creator work">${icon("play")}<span>Work</span></a>
-    </nav>`;
+    </div>`;
   $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + collabDialog + quickDock);
 }
 
