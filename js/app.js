@@ -188,11 +188,16 @@ function renderChrome() {
         <h2 id="collabTitle">Let’s create together.</h2>
         <p id="collabDescription">Choose how you’d like to get in touch with Tanisha.</p>
         <a class="contact-choice email-choice" href="${mailto(CONFIG.contact.emailSubject, CONFIG.contact.emailBody)}" data-action="collab-email">${icon("mail")}<span><strong>Email</strong><small>${esc(P().email)}</small></span>${icon("arrow")}</a>
-        <a class="contact-choice" href="https://ig.me/m/${encodeURIComponent(P().instagramHandle.replace(/^@/, ""))}" target="_blank" rel="noopener noreferrer" data-action="collab-dm">${icon("ig")}<span><strong>Instagram DM</strong><small>Message on Instagram</small></span>${icon("arrow")}</a>
+        <a class="contact-choice" href="https://ig.me/m/taniisha.tripathii" target="_blank" rel="noopener noreferrer" data-action="collab-dm">${icon("ig")}<span><strong>Instagram DM</strong><small>Message on Instagram</small></span>${icon("arrow")}</a>
         <p class="modal-note">For brand partnerships, campaign enquiries and UGC.</p>
       </section>
     </div>`;
-  $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + collabDialog);
+  const quickDock = `<nav class="quick-dock noprint" aria-label="Quick navigation">
+      <button type="button" data-action="share" aria-label="Share media kit">${icon("share")}<span>Share</span></button>
+      <a href="#numbers" aria-label="View audience numbers">${icon("eye")}<span>Numbers</span></a>
+      <a href="#work" aria-label="View creator work">${icon("play")}<span>Work</span></a>
+    </nav>`;
+  $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + collabDialog + quickDock);
 }
 
 /* ───────── 4.4 Behaviours (each is independent + guarded) ───────── */
@@ -406,7 +411,16 @@ function initActions() {
     const m = e.target.closest('a[href^="mailto:"]');                       // every email link goes through openMail (with fallback)
     if (m) { e.preventDefault(); openMail(m.href); }
   });
-  addEventListener("keydown", e => { if (e.key === "Escape") { sheet.close(); collab.close(); closeViewer(); } });
+  addEventListener("keydown", e => {
+    if (e.key === "Escape") { sheet.close(); collab.close(); closeViewer(); return; }
+    const dialog = $("#collabDialog");
+    if (e.key !== "Tab" || !dialog || dialog.hidden) return;
+    const focusable = $('a[href], button:not([disabled])', dialog);
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   addEventListener("error", e => console.error("[media-kit] runtime error:", e.message));
   document.addEventListener("error", e => { if (e.target.tagName === "IMG") e.target.remove(); }, true);   // broken image → remove quietly
 }
