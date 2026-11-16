@@ -319,27 +319,6 @@ function countUp(el) {
   (function tick(t) { const p = Math.min(1, (t - t0) / 1300); el.textContent = fmt(to * (1 - Math.pow(1 - p, 3))) + suf; if (p < 1) requestAnimationFrame(tick); })(t0);
 }
 
-/** Top menu: sliding hover pill + highlight of the section in view. */
-function initNav() {
-  const lk = $("#lk"); if (!lk) return;
-  const hl = $(".hl", lk), links = $$("a", lk);
-  links.forEach(a => a.addEventListener("mouseenter", () => {
-    const first = !hl.classList.contains("show");
-    if (first) hl.style.transition = "none";
-    hl.style.width = a.offsetWidth + "px"; hl.style.transform = `translateX(${a.offsetLeft}px)`;
-    if (first) { void hl.offsetWidth; hl.style.transition = ""; }
-    hl.classList.add("show");
-  }));
-  lk.addEventListener("mouseleave", () => hl.classList.remove("show"));
-  if (!("IntersectionObserver" in window)) return;
-  const spy = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); const on = $("a.on", lk); if (on && lk.scrollWidth > lk.clientWidth) lk.scrollTo({ left: on.offsetLeft - (lk.clientWidth - on.offsetWidth) / 2, behavior: "smooth" }); }
-  }), { rootMargin: "-45% 0px -50% 0px" });
-  $("#app > section, #app > .cn").forEach(s => spy.observe(s));
-  const homeLink = $('a[data-nav-home]', lk), home = $("#home");
-  if (homeLink && home) spy.observe(home);
-}
-
 /** Reels: 3D coverflow carousel with arrows, dots, swipe, keyboard and autoplay. */
 function initCarousel() {
   const car = $("#car"), dots = $("#dots"); if (!car || !car.children.length) return;
