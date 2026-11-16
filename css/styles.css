@@ -839,3 +839,184 @@ nav > div { position:relative;justify-content:space-between; }
   .city-card,.city-map img { transition:none!important; }
   .city-pin { animation:none!important; }
 }
+
+/* ═════ PRINT / SAVE AS PDF — continuous A4 document ═════ */
+@page {
+  size: A4;
+  margin: 13mm 13mm 15mm;
+}
+
+@media print {
+  :root {
+    --bg:#fffdf5;
+    --bg2:#f0ecd9;
+    --card:#fffdf5;
+    --ink:#283326;
+    --mut:#69705f;
+    --acc:#657044;
+    --line:rgba(53,65,39,.16);
+  }
+
+  html,body {
+    width:auto!important;
+    min-width:0!important;
+    overflow:visible!important;
+    background:var(--bg)!important;
+    color:var(--ink)!important;
+    font-size:10pt;
+    line-height:1.42;
+  }
+
+  body {
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+  #app { width:100%;max-width:none!important; }
+  nav,.noprint,.orbs,#pg,.totop,.toast,.sh,.collab-modal,.quick-dock,.cnav { display:none!important; }
+
+  section {
+    width:auto!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:10mm 0 0!important;
+    overflow:visible!important;
+    break-inside:auto;
+    page-break-inside:auto;
+  }
+
+  .hero {
+    display:grid!important;
+    grid-template-columns:1.05fr .95fr!important;
+    align-items:center;
+    gap:8mm;
+    min-height:0!important;
+    padding:0 0 9mm!important;
+    border-bottom:.5pt solid var(--line);
+    break-inside:avoid;
+  }
+
+  .hero h1 { font-size:38pt;line-height:.98; }
+  .hero .lead { margin:5mm 0;font-size:13pt; }
+  .hero .tags { gap:2mm;margin-bottom:5mm; }
+  .hero .tags span { padding:2mm 3mm;font-size:8.5pt; }
+  .hero .cta { display:none!important; }
+  .hero .cl { height:105mm;min-height:0;transform:none!important; }
+  .hero .cl img { border-width:3px;box-shadow:none;animation:none!important; }
+  .hero .fc { padding:2mm 3mm;font-size:10pt;box-shadow:none; }
+
+  section:not(.hero) > .ey { margin-bottom:2mm;break-after:avoid; }
+  h2 {
+    max-width:none!important;
+    margin-bottom:7mm!important;
+    font-size:25pt!important;
+    line-height:1.05;
+    break-after:avoid;
+    page-break-after:avoid;
+  }
+
+  .rv,.rv.on,.rv .card,.rv.on .card {
+    opacity:1!important;
+    transform:none!important;
+    transition:none!important;
+  }
+
+  .card,.rc,.rl,.city-card,.li,.steps>.card,.ex>.card {
+    break-inside:avoid;
+    page-break-inside:avoid;
+    box-shadow:0 0 0 .5pt var(--line)!important;
+  }
+
+  .bento { grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3mm; }
+  .bento .card { min-width:0;padding:5mm;border-radius:5mm; }
+  .big { font-size:25pt!important; }
+  .lbl { font-size:8.5pt; }
+
+  .car {
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:4mm;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    break-inside:auto;
+  }
+  .car .rl {
+    width:auto!important;
+    max-width:none!important;
+    height:68mm;
+    aspect-ratio:auto;
+    border-radius:4mm;
+    overflow:hidden;
+    opacity:1!important;
+    transform:none!important;
+    box-shadow:none!important;
+  }
+  .rl .v { bottom:12mm;font-size:17pt; }
+  .rl .v small,.rl .m { font-size:7pt; }
+
+  .pills { gap:2mm;margin:5mm 0 3mm; }
+  .pills span { padding:2mm 3mm;font-size:8pt; }
+  .mq,.mrq {
+    overflow:visible!important;
+    margin:0!important;
+    -webkit-mask:none!important;
+    mask:none!important;
+  }
+  .tk,.rw {
+    display:flex;
+    flex-wrap:wrap!important;
+    width:auto!important;
+    animation:none!important;
+    break-inside:avoid;
+  }
+  .tk { gap:2mm; }
+  .tk span { margin:0;padding:2mm 3mm;font-size:9pt; }
+  .tk .dup,.rw img[aria-hidden] { display:none!important; }
+  .mrq { gap:3mm; }
+  .rw { gap:2mm; }
+  .rw img { height:42mm!important;margin:0!important;border-radius:3mm; }
+
+  .city-grid { grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3mm; }
+  .city-card { border-radius:4mm; }
+  .city-map { aspect-ratio:1.38; }
+  .city-rank { width:7mm;height:7mm;top:2mm;left:2mm;font-size:7pt; }
+  .city-pin { animation:none!important; }
+  .city-meta { padding:3mm; }
+  .city-meta h3 { font-size:11pt; }
+  .city-meta p,.city-note { font-size:7.5pt; }
+
+  .ex,.steps { grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:3mm; }
+  .ex .card,.steps .card { padding:4mm;border-radius:4mm; }
+  .ex h3,.steps h3 { font-size:13pt; }
+  .steps .num { margin-bottom:3mm; }
+  .steps::before { width:100%!important; }
+
+  .rates { grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3mm; }
+  .rc { min-height:0!important;padding:4mm;border-radius:4mm; }
+  .rc h3 { margin:2mm 0 8mm;font-size:11pt; }
+  .pr { font-size:20pt; }
+  #rates > .btn { display:none!important; }
+
+  .cn {
+    width:auto!important;
+    max-width:none!important;
+    margin:10mm 0 0!important;
+    padding:10mm!important;
+    border-radius:6mm;
+    overflow:visible!important;
+    break-inside:avoid;
+    box-shadow:none;
+  }
+  .cn h2 { font-size:24pt!important;margin-bottom:3mm!important; }
+  .cn .sb { font-size:10pt;margin-bottom:5mm; }
+  .ls { margin-bottom:0; }
+  .li { min-height:0;padding:2mm;border-radius:4mm; }
+  .cb,.ar { display:none!important; }
+
+  footer { padding:7mm 0 0!important;font-size:8pt; }
+  a { color:inherit;text-decoration:none; }
+  img { max-width:100%; }
+  p,li { orphans:3;widows:3; }
+}
