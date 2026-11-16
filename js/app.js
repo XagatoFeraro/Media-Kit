@@ -37,6 +37,7 @@ const ICONS = {
   comment:  '<path d="M3.2 20.8l1.1-4A9.2 9.2 0 1 1 8 19.7z"/>',
   send:     '<path d="M21.5 3 10.2 14.3"/><path d="M21.5 3 14.8 21l-4.6-6.7L3.5 9.7z"/>',
   play: '<path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none"/>',
+  home: '<path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-6h6v6"/>',
   bookmark: '<path d="M6 3.5h12v17l-6-4.5-6 4.5z"/>',
 };
 const icon = n => ICONS[n] ? `<svg class="ic" aria-hidden="true" viewBox="0 0 24 24">${ICONS[n]}</svg>` : "";
@@ -161,11 +162,12 @@ const RENDER = {
 /* ───────── 4.3 Page chrome: nav, footer, share sheet, back-to-top ───────── */
 function renderChrome() {
   const navItems = CONFIG.layout.filter(id => CONFIG.sections[id]?.nav && document.getElementById(id));
+  const navLinks = `<a href="#home" data-nav-home>Home</a>${navItems.map(id => `<a href="#${id}">${esc(CONFIG.sections[id].label)}</a>`).join("")}`;
   const nav = `<nav><div>
       <a class="brand-lockup" ${IG_LINK()} aria-label="Visit Tanisha Tripathi on Instagram">
         ${icon("ig")}<b class="nh">${esc(P().name)}</b>
       </a>
-      <span class="lk" id="lk"><i class="hl"></i>${navItems.map(id => `<a href="#${id}">${esc(CONFIG.sections[id].label)}</a>`).join("")}</span>
+      <span class="lk" id="lk"><i class="hl"></i>${navLinks}</span>
       <span class="ac">
         <button class="ib" type="button" data-action="share" aria-label="Share or save as PDF">${icon("share")}</button>
         <button class="btn w s" type="button" data-action="collab">${icon("heart")}<span>Let’s create together</span></button>
@@ -194,6 +196,7 @@ function renderChrome() {
       </section>
     </div>`;
   const quickDock = `<div class="quick-dock noprint" role="navigation" aria-label="Quick navigation">
+      <a href="#home" data-dock-item="home" aria-label="Back to home">${icon("home")}<span>Home</span></a>
       <a href="#numbers" data-dock-item="numbers" aria-label="View audience numbers">${icon("eye")}<span>Numbers</span></a>
       <a href="#work" data-dock-item="work" aria-label="View creator work">${icon("play")}<span>Work</span></a>
     </div>`;
@@ -218,7 +221,7 @@ function initQuickDock() {
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(entries => {
       const current = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (current) setActive(current.target.id === "numbers" ? "numbers" : "work");
+      if (current) setActive(current.target.id === "home" ? "home" : current.target.id === "numbers" ? "numbers" : "work");
     }, { rootMargin: "-35% 0px -50% 0px", threshold: [0, .1, .25, .5] });
     targets.forEach(target => observer.observe(target));
   } else {
@@ -260,7 +263,9 @@ function initNav() {
   const spy = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); const on = $("a.on", lk); if (on && lk.scrollWidth > lk.clientWidth) lk.scrollTo({ left: on.offsetLeft - (lk.clientWidth - on.offsetWidth) / 2, behavior: "smooth" }); }
   }), { rootMargin: "-45% 0px -50% 0px" });
-  $$("#app > section, #app > .cn").forEach(s => spy.observe(s));
+  $("#app > section, #app > .cn").forEach(s => spy.observe(s));
+  const homeLink = $('a[data-nav-home]', lk), home = $("#home");
+  if (homeLink && home) spy.observe(home);
 }
 
 /** Reels: 3D coverflow carousel with arrows, dots, swipe, keyboard and autoplay. */
