@@ -235,17 +235,29 @@ function initSectionNavigation() {
     highlightPill(navLinks.find(link => link.getAttribute("href") === "#" + id));
   };
 
-  controls.forEach(link => link.addEventListener("click", () => {
+  controls.forEach(link => link.addEventListener("click", event => {
     const id = link.getAttribute("href").slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    event.preventDefault();
     setActive(id);
+    history.replaceState(null, "", "#" + id);
+    const headerHeight = $("nav")?.getBoundingClientRect().height || 0;
+    const top = target.getBoundingClientRect().top + scrollY - headerHeight - 14;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
   }));
 
   if (nav) {
-    navLinks.forEach(link => link.addEventListener("mouseenter", () => highlightPill(link)));
+    navLinks.forEach(link => link.addEventListener("mouseenter", () => {
+      const pill = $(".hl", nav);
+      if (!pill) return;
+      pill.style.width = link.offsetWidth + "px";
+      pill.style.transform = "translateX(" + link.offsetLeft + "px)";
+      pill.classList.add("show");
+    }));
     nav.addEventListener("mouseleave", () => {
       const active = navLinks.find(link => link.classList.contains("on"));
       if (active) highlightPill(active);
-      else $(".hl", nav)?.classList.remove("show");
     });
   }
 
@@ -254,15 +266,12 @@ function initSectionNavigation() {
     if (frame) return;
     frame = requestAnimationFrame(() => {
       frame = 0;
-      const line = Math.min(innerHeight * 0.38, 300);
+      const line = Math.min(innerHeight * 0.32, 240);
       let current = sections[0];
       for (const section of sections) {
         const rect = section.getBoundingClientRect();
         if (rect.top <= line) current = section;
-        if (rect.top <= line && rect.bottom > line) {
-          current = section;
-          break;
-        }
+        else break;
       }
       if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
         current = sections[sections.length - 1];

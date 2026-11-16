@@ -738,3 +738,22 @@ nav > div { position:relative;justify-content:space-between; }
   box-shadow:0 3px 10px rgba(53,65,39,.16);
 }
 .quick-dock > a.active .ic { color:inherit; }
+
+/* Mobile proof-point pills and package CTA: keep the group visually centred. */
+@media (max-width:820px) {
+  #numbers .proof-points,
+  #numbers .stats-notes,
+  #numbers .brand-proof,
+  #numbers .proof-row,
+  #numbers .metrics-foot,
+  #numbers .custom-package,
+  #numbers .package-cta {
+    justify-content:center!important;
+    text-align:center!important;
+    margin-inline:auto!important;
+  }
+  #numbers .custom-package a,
+  #numbers .package-cta a { margin-inline:auto!important; }
+  #app > section[id],
+  #app > .cn[id] { scroll-margin-top:78px; }
+}
