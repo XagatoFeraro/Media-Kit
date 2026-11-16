@@ -128,7 +128,7 @@ const RENDER = {
     return section("audience", head(CONFIG.sections.audience) + `
       <div class="city-grid" aria-label="Top audience cities">${cities}</div>
       <p class="city-note">${esc(A.note)}</p>`);
-  }
+  },
 
   expect() {
     return section("expect", head(CONFIG.sections.expect) + `<div class="ex">${CONFIG.expect.map(e => `<div class="card"><h3>${esc(e.title)}</h3><p>${esc(e.text)}</p></div>`).join("")}</div>`);
