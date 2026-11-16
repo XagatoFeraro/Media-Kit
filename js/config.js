@@ -17,7 +17,7 @@ const CONFIG = {
     email: "ttanishata@gmail.com",
     instagramHandle: "@taniisha.tripathii",
     instagramUrl: "https://www.instagram.com/taniisha.tripathii",
-    statsSource: "Instagram Insights, Oct 2026",   // shown in footer
+    statsSource: "Instagram Insights, Nov 2026",   // shown in footer
   },
 
   /* ── 2. HERO (first screen) ─────────────────────────────────── */
@@ -29,7 +29,7 @@ const CONFIG = {
     photos: ["assets/images/hero/hero-1.jpg", "assets/images/hero/hero-2.jpg", "assets/images/hero/hero-3.jpg"],              // 1–5 photos (file path or link). The collage re-arranges itself per count.
     chips: [                                             // 2 floating stat chips
       { value: "1.5M",  label: "views in 30 days" },
-      { value: "10.4K", label: "followers" },
+      { value: "11K", label: "followers" },
     ],
   },
 
@@ -51,7 +51,7 @@ const CONFIG = {
      Add / remove / reorder cards freely; the grid adapts. */
   numbers: [
     { icon: "eye",      value: 1.5,  decimals: 1, suffix: "M", label: "Views in the last 30 days", featured: true },
-    { icon: "users",    value: 10.4, decimals: 1, suffix: "K", label: "Followers" },
+    { icon: "users",    value: 11, decimals: 0, suffix: "K", label: "Followers" },
     { icon: "userplus", value: 2.1,  decimals: 1, suffix: "K", label: "New followers this month" },
     { icon: "heart",    value: 1000, suffix: "+", label: "Avg. likes per post" },
     { icon: "comment",  value: 300,  suffix: "+", label: "Avg. comments" },

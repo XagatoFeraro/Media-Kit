@@ -72,6 +72,7 @@ const RENDER = {
         <div class="tags">${H.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>
         <div class="cta">
           <a class="btn w" href="#contact" data-action="collab">${icon("heart")}${esc(H.cta)}</a>
+          <a class="btn g" href="#numbers" aria-label="View audience and follower statistics">${icon("eye")}<span class="bt">View audience</span></a>
           <a class="btn g" ${IG_LINK()} aria-label="Instagram ${esc(P().instagramHandle)}">${icon("ig")}<span class="bt">${esc(P().instagramHandle)}</span></a>
           <button class="btn g" type="button" data-action="share" aria-label="Share or save as PDF">${icon("share")}<span class="bt">Share</span></button>
         </div>
@@ -178,7 +179,12 @@ function renderChrome() {
       </div><button class="x" type="button" data-action="share-close">Close</button></div></div>`;
   const top = `<button class="totop noprint" id="toTop" type="button" data-action="top" aria-label="Back to top">${icon("up")}</button>`;
   $("#app").insertAdjacentHTML("afterbegin", nav);
-  $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top);
+  const quick = `<div class="quick-dock noprint" aria-label="Quick actions">
+      <button type="button" data-action="share">${icon("share")}<span>Share</span></button>
+      <a href="#numbers">${icon("eye")}<span>Audience</span></a>
+      <a href="#contact" data-action="collab">${icon("heart")}<span>Collaborate</span></a>
+    </div>`;
+  $("#app").insertAdjacentHTML("beforeend", footer + shareSheet + top + quick);
 }
 
 /* ───────── 4.4 Behaviours (each is independent + guarded) ───────── */
