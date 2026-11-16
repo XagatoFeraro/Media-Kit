@@ -153,7 +153,7 @@ const RENDER = {
           <button class="cb" type="button" data-action="copy-email" aria-label="Copy email address">${icon("copy")}</button></div>
         <a class="li lm" ${IG_LINK()}><span class="ci">${icon("ig")}</span><span class="tx"><small>Instagram</small>${esc(P().instagramHandle)}</span><span class="ar">${icon("arrow")}</span></a>
       </div>
-      <a class="btn w" href="${mailto(C.emailSubject, C.emailBody)}" data-action="email">${icon("heart")}${esc(C.cta)}</a>
+      <button class="btn w" type="button" data-action="collab">${icon("heart")}Let’s create together</button>
     </div>`;
   },
 };
@@ -168,7 +168,7 @@ function renderChrome() {
       <span class="lk" id="lk"><i class="hl"></i>${navItems.map(id => `<a href="#${id}">${esc(CONFIG.sections[id].label)}</a>`).join("")}</span>
       <span class="ac">
         <button class="ib" type="button" data-action="share" aria-label="Share or save as PDF">${icon("share")}</button>
-        <button class="btn w s" type="button" data-action="collab">${icon("heart")}<span class="desktop-cta">${esc(CONFIG.hero.cta)}</span><span class="mobile-cta">Let’s create together</span></button>
+        <button class="btn w s" type="button" data-action="collab">${icon("heart")}<span>Let’s create together</span></button>
       </span></div></nav>`;
   const footer = `<footer>© ${P().year} ${esc(P().name)} · ${esc(P().city)} · Figures from ${esc(P().statsSource)}
       <div class="fl noprint"><a ${IG_LINK()}>${icon("ig")}${esc(P().instagramHandle)}</a><a href="mailto:${esc(P().email)}">${icon("mail")}${esc(P().email)}</a></div></footer>`;
@@ -194,7 +194,6 @@ function renderChrome() {
       </section>
     </div>`;
   const quickDock = `<div class="quick-dock noprint" role="navigation" aria-label="Quick navigation">
-      <button type="button" data-action="share" data-dock-item="share" aria-label="Share media kit">${icon("share")}<span>Share</span></button>
       <a href="#numbers" data-dock-item="numbers" aria-label="View audience numbers">${icon("eye")}<span>Numbers</span></a>
       <a href="#work" data-dock-item="work" aria-label="View creator work">${icon("play")}<span>Work</span></a>
     </div>`;
@@ -215,7 +214,6 @@ function initQuickDock() {
     if (active) item.setAttribute("aria-current", "location");
     else item.removeAttribute("aria-current");
   });
-  items.find(item => item.dataset.dockItem === "share")?.addEventListener("click", () => setActive("share"));
   items.filter(item => item.tagName === "A").forEach(item => item.addEventListener("click", () => setActive(item.dataset.dockItem)));
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(entries => {
@@ -224,10 +222,9 @@ function initQuickDock() {
     }, { rootMargin: "-35% 0px -50% 0px", threshold: [0, .1, .25, .5] });
     targets.forEach(target => observer.observe(target));
   } else {
-    const update = () => { const current = targets.find(target => { const r = target.getBoundingClientRect(); return r.top < innerHeight * .6 && r.bottom > innerHeight * .3; }); setActive(current?.id || (scrollY < 120 ? "" : "work")); };
+    const update = () => { const current = targets.find(target => { const r = target.getBoundingClientRect(); return r.top < innerHeight * .6 && r.bottom > innerHeight * .3; }); setActive(current?.id || ""); };
     addEventListener("scroll", update, { passive: true }); update();
   }
-  addEventListener("scroll", () => { if (scrollY < 120) setActive(""); }, { passive: true });
 }
 function initReveal() {
   const reveal = el => {
