@@ -440,14 +440,36 @@ function openMail(href) {
     ]);
   }, 1600);
 }
-/** Opens the print dialog (used for "Save as PDF"). If the browser blocks it, explains what to do instead. */
-function printPage() {
-  let opened = false; const mark = () => opened = true;
-  ["beforeprint", "blur"].forEach(ev => addEventListener(ev, mark, { once: true }));
-  setTimeout(() => { try { print(); } catch (err) { console.warn("[media-kit] print blocked:", err); } }, 250);
+/** Prepare the full page before opening the browser's Save as PDF dialog. */
+async function printPage() {
+  let opened = false;
+  const mark = () => { opened = true; };
+  const onBlur = mark;
+  addEventListener("beforeprint", mark, { once: true });
+  addEventListener("blur", onBlur, { once: true });
+
+  try {
+    const images = [...document.images];
+    images.forEach(image => { image.loading = "eager"; });
+
+    await Promise.all([
+      document.fonts?.ready,
+      ...images.map(image => image.decode?.().catch(() => undefined) ?? Promise.resolve()),
+    ]);
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    window.print();
+  } catch (err) {
+    console.warn("[media-kit] print preparation failed:", err);
+    toast("Couldn’t prepare the PDF. Try Ctrl/Cmd + P and choose “Save as PDF”.");
+  }
+
   setTimeout(() => {
+    removeEventListener("beforeprint", mark);
+    removeEventListener("blur", onBlur);
     if (opened) return;
-    toast("The print window didn’t open here. Press Ctrl/Cmd + P and choose “Save as PDF”.", [{ label: "Open in new tab", run: () => window.open(shareUrl(), "_blank", "noopener") }]);
+    toast("The print window didn’t open here. Press Ctrl/Cmd + P and choose “Save as PDF”.", [
+      { label: "Open in new tab", run: () => window.open(shareUrl(), "_blank", "noopener") },
+    ]);
   }, 1600);
 }
 
