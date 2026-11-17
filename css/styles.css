@@ -1099,7 +1099,6 @@ nav > div { position:relative;justify-content:space-between; }
   --acc:#3155ff;--g:linear-gradient(110deg,#3155ff,#7b8fff);
   --on:#fff;--line:rgba(23,23,23,.16);--glass:rgba(243,240,232,.9);
 }
-:root[data-theme="dark"],@media (prefers-color-scheme:dark) { }
 :root[data-theme="dark"] { --bg:#f3f0e8;--bg2:#e8e4d9;--card:#fffdf7;--ink:#171717;--mut:#68665f;--acc:#3155ff;--on:#fff;--line:rgba(23,23,23,.16);--glass:rgba(243,240,232,.9); }
 html { scroll-padding-top:76px; }
 body {
