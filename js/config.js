@@ -22,7 +22,7 @@ const CONFIG = {
 
   /* ── 2. HERO (first screen) ─────────────────────────────────── */
   hero: {
-    headline: ["Style you notice.", "Stories you remember."], // line 2 is the gradient line
+    headline: ["I turn “what if?”", "into “watch this.”"], // line 2 is the gradient line
     lead: "Tanisha Tripathi — lifestyle & fashion creator from Pune, making brand stories feel like part of the feed.",
     tags: ["Lifestyle", "Fashion", "Beauty", "UGC"],
     cta: "Let’s create together",
