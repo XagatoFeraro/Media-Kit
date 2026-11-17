@@ -330,7 +330,7 @@ function initCarousel() {
       const b = r.getBoundingClientRect(), d = (b.left + b.width / 2 - mid) / b.width, a = Math.abs(d);
       r.style.setProperty("--s", (1 - Math.min(.14, a * .1)).toFixed(3));
       r.style.setProperty("--o", (1 - Math.min(.55, a * .3)).toFixed(3));
-      r.style.setProperty("--r", (-Math.sign(d) * Math.min(28, a * 18)).toFixed(1) + "deg");
+      r.style.setProperty("--r", (-Math.sign(d) * Math.min(12, a * 7)).toFixed(1) + "deg");
       if (a < bd) { bd = a; best = i; }
     });
     cur = best; [...dots.children].forEach((d, i) => d.classList.toggle("on", i === best));
